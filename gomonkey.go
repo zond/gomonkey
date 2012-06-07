@@ -23,11 +23,6 @@ func Shutdown() {
 	C.JS_ShutDown()
 }
 
-type JS struct {
-	context *C.JSContext
-	global *C.JSObject
-}
-
 type JSObject struct {
 	js *JS
 	value *C.JSObject
@@ -36,6 +31,15 @@ type JSObject struct {
 type JSFunction struct {
 	js *JS
 	value *C.JSFunction
+}
+
+func (self *JSFunction) Call(args ...interface{}) {
+	
+}
+
+type JS struct {
+	context *C.JSContext
+	global *C.JSObject
 }
 
 func NewJS() *JS {
@@ -52,7 +56,7 @@ func (self *JS) Destroy() {
 	C.JS_DestroyContext(self.context)
 }
 
-func (self *JS) convert(val C.jsval) interface{} {
+func (self *JS) jsval2goval(val C.jsval) interface{} {
 	t := C.JS_TypeOfValue(self.context, val)
 	if t == C.JSTYPE_VOID {
 		return nil
@@ -86,6 +90,6 @@ func (self *JS) Eval(script string) interface{} {
                 C.CString("script"),
                 1, 
                 &rval)
-	return self.convert(rval)
+	return self.jsval2goval(rval)
 }
 
