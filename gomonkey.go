@@ -24,12 +24,12 @@ func Shutdown() {
 
 type JSObject struct {
 	js *JS
-	value *C.JSObject
+	object *C.JSObject
 }
 
 type JSFunction struct {
 	js *JS
-	value *C.JSFunction
+	function *C.JSFunction
 }
 
 type JS struct {
@@ -49,43 +49,21 @@ func (self *JS) Destroy() {
 	delete(scripts, self)
 	C.DestroyContext(self.context)
 }
-/*
-func (self *JS) goval2jsval(val interface{}) C.jsval {
-	if val == nil {
-		return C.JSVAL_NULL
-	} else {
-		switch t := val.(type) {
-		case *JSObject:
-			var rval C.jsval
-			C.JS_ValueToObject(self.context, rval, val.(*JSObject).value)
-			return rval
-		case *JSFunction:
-			return C.JS_ValueToFunction(self.contect, val.(*JSFunction).value)
-		}
-	}
-}
-*/
+
 func (self *JS) jsval2goval(val C.jsval) interface{} {
 	t := C.JS_TypeOfValue(self.context, val)
 	if t == C.JSTYPE_VOID {
 		return nil
 	} else if t == C.JSTYPE_OBJECT {
-		var obj C.JSObject
-		var obj_p = &obj
-		C.JS_ValueToObject(self.context, val, &obj_p)
-		return &JSObject{self, &obj}
+		return &JSObject{self, C.Jsval2JSObject(self.context, val)}
 	} else if t == C.JSTYPE_FUNCTION {
-		return &JSFunction{self, C.JS_ValueToFunction(self.context, val)}
+		return &JSFunction{self, C.Jsval2JSFunction(self.context, val)}
 	} else if t == C.JSTYPE_STRING {
-		return C.GoString(C.JS_EncodeString(self.context, C.JS_ValueToString(self.context, val)))
+		return C.GoString(C.JS_EncodeString(self.context, C.Jsval2JSString(self.context, val)))
 	} else if t == C.JSTYPE_NUMBER {
- 		var rval C.jsdouble
-		C.JS_ValueToNumber(self.context, val, &rval)
-		return float64(rval)
+		return float64(C.Jsval2jsdouble(self.context, val))
 	} else if t == C.JSTYPE_BOOLEAN {
-		var rval C.JSBool
-		C.JS_ValueToBoolean(self.context, val, &rval)
-		return rval == C.JS_TRUE
+		return C.Jsval2JSBool(self.context, val) == C.JS_TRUE
 	}
 	return nil
 }

@@ -8,6 +8,46 @@ void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
   fprintf(stderr, "%s:%u:%s\n", report->filename ? report->filename : "<no filename>", (unsigned int) report->lineno, message);
 }
 
+jsval
+JsNull() {
+  return JSVAL_NULL;
+}
+
+JSObject*
+Jsval2JSObject(JSContext *context, jsval val) {
+  jsval out;
+  JS_ConvertValue(context, val, JSTYPE_OBJECT, &out);
+  return (JSObject*) out;
+}
+
+JSFunction*
+Jsval2JSFunction(JSContext *context, jsval val) {
+  jsval out;
+  JS_ConvertValue(context, val, JSTYPE_FUNCTION, &out);
+  return (JSFunction*) out;
+}
+
+JSString*
+Jsval2JSString(JSContext *context, jsval val) {
+  jsval out;
+  JS_ConvertValue(context, val, JSTYPE_STRING, &out);
+  return (JSString*) out;
+}
+
+jsdouble
+Jsval2jsdouble(JSContext *context, jsval val) {
+  jsdouble out;
+  JS_ValueToNumber(context, val, &out);
+  return out;
+}
+
+JSBool
+Jsval2JSBool(JSContext *context, jsval val) {
+  jsval out;
+  JS_ConvertValue(context, val, JSTYPE_BOOLEAN, &out);
+  return (JSBool) out;
+}
+
 JSContext*
 NewContext(JSRuntime* runtime) {
   JSContext *context = JS_NewContext(runtime, 8192);
