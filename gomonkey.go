@@ -2,8 +2,8 @@
 package gomonkey
 
 /*
-#cgo LDFLAGS: -L. -lgomonkey -lmozjs185
 #include "c/gomonkey.h"
+#cgo LDFLAGS: -L. -lgomonkey -lmozjs185
 */
 import "C"
 
