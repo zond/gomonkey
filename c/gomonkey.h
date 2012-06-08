@@ -13,6 +13,12 @@ DestroyContext(JSContext *context);
 extern jsval
 JsNull();
 
+extern jsval
+JsFalse();
+
+extern jsval
+JsTrue();
+
 extern JSObject*
 Jsval2JSObject(JSContext*, jsval);
 
@@ -36,4 +42,10 @@ SetJsvalArray(jsval*, int, jsval);
 
 extern jsval
 JSObject2Jsval(JSObject*);
+
+extern jsval
+JSString2Jsval(JSString*);
+
+extern jsval
+Double2Jsval(double);
 

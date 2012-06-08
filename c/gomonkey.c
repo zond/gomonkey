@@ -13,6 +13,16 @@ JsNull() {
   return JSVAL_NULL;
 }
 
+jsval
+JsTrue() {
+  return JSVAL_TRUE;
+}
+
+jsval
+JsFalse() {
+  return JSVAL_FALSE;
+}
+
 JSObject*
 Jsval2JSObject(JSContext *context, jsval val) {
   jsval out;
@@ -61,6 +71,21 @@ Jsval2JSBool(JSContext *context, jsval val) {
 jsval*
 AllocateJsvalArray(int size) {
   return (jsval*) malloc(sizeof(jsval) * size);
+}
+
+jsval
+JSObject2Jsval(JSObject *obj) {
+  return OBJECT_TO_JSVAL(obj);
+}
+
+jsval
+JSString2Jsval(JSString *s) {
+  return STRING_TO_JSVAL(s);
+}
+
+jsval
+Double2Jsval(double d) {
+  return DOUBLE_TO_JSVAL(d);
 }
 
 void

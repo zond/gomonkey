@@ -90,10 +90,22 @@ func (self *JS) goval2jsval(val interface{}) C.jsval {
 	} else {
 		switch val.(type) {
 		case (*JSObject):
+			return C.JSObject2Jsval(val.(*JSObject).object)
 		case (*JSFunction):
+			return val.(*JSFunction).function
 		case string:
+			c_string := C.CString(val.(string))
+			defer C.free(unsafe.Pointer(c_string))
+			js_string := C.JS_NewStringCopyZ(self.context, c_string)
+			return C.JSString2Jsval(js_string)
 		case float64:
+			return C.Double2Jsval(C.double(val.(float64)))
 		case bool:
+			if val.(bool) == true {
+				return C.JsTrue()
+			} else {
+				return C.JsFalse()
+			}
 		default:
 			panic(fmt.Sprint("Unable to convert", val, "to jsval!"))
 		}
