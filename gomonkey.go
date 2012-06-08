@@ -42,6 +42,15 @@ type JSFunction struct {
 	function C.jsval
 }
 
+func NewJSFunction(js *JS, function C.jsval) *JSFunction {
+	rval := &JSFunction{js, function}
+	C.JS_AddValueRoot(rval.js.context, &(rval.function))
+	runtime.SetFinalizer(rval, func(f *JSFunction) {
+		C.JS_RemoveValueRoot(f.js.context, &(f.function))
+	})
+	return rval
+}
+
 func (self *JSFunction) Equals(other *JSFunction) bool {
 	return (self.js == other.js) && (self.function == other.function)
 }
@@ -136,7 +145,7 @@ func (self *JS) jsval2goval(val C.jsval) interface{} {
 	} else if t == C.JSTYPE_OBJECT {
 		return &JSObject{self, C.Jsval2JSObject(self.context, val)}
 	} else if t == C.JSTYPE_FUNCTION {
-		return &JSFunction{self, val}
+		return NewJSFunction(self, val)
 	} else if t == C.JSTYPE_STRING {
 		c_string := C.JS_EncodeString(self.context, C.Jsval2JSString(self.context, val))
 		defer C.free(unsafe.Pointer(c_string))
