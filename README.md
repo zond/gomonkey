@@ -32,3 +32,9 @@ The `Makefile` is *really* trivial and probably won't work on your system (patch
 ## What else?
 
 Currently there isn't much more to do, even if you *could* look at https://github.com/zond/gomonkey/blob/master/gomonkey_test.go and figure out how to use this for other things than testing itself ;)
+
+## Why?
+
+The reason I started this was that I tried to use `go-v8`, but never got the last step (`make`ing the wrapper and re-getting the library) to work properly, and I really wanted the JavaScript library I used to be installable via `go get ...`.
+
+And since SpiderMonkey already exports a C API it was (to me) preferable to use it instead of v8 (which AFAIK only exports a C++ API).
