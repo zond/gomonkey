@@ -46,6 +46,16 @@ Jsval2JSBool(JSContext *context, jsval val) {
   return (JSBool) out;
 }
 
+jsval*
+AllocateJsvalArray(int size) {
+  return (jsval*) malloc(sizeof(jsval) * size);
+}
+
+void
+SetJsvalArray(jsval *ary, int index, jsval val) {
+  ary[index] = val;
+}
+
 JSContext*
 NewContext(JSRuntime* runtime) {
   JSContext *context = JS_NewContext(runtime, 8192);

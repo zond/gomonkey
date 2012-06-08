@@ -58,4 +58,7 @@ func TestFunctionReturn(t *testing.T) {
 	if reflect.TypeOf(x) != reflect.TypeOf(&JSFunction{}) {
 		t.Error(x, "should be a JSFunction")
 	}
+	if x.(*JSFunction).Call(nil) != 1.0 {
+		t.Error(x, "should return 1.0")
+	}
 }

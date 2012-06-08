@@ -27,3 +27,9 @@ Jsval2jsdouble(JSContext*, jsval);
 
 extern JSBool
 Jsval2JSBool(JSContext*, jsval);
+
+extern jsval*
+AllocateJsvalArray(int);
+
+extern void
+SetJsvalArray(jsval*, int, jsval);

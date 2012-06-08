@@ -35,19 +35,28 @@ type JSFunction struct {
 	js *JS
 	function C.jsval
 }
-/*
+
 func (self *JSFunction) Call(receiver *JSObject, params... interface{}) interface{} {
-	var c_receiver C.JSObject
+	var c_receiver *C.JSObject
 	if receiver == nil {
-		c_receiver = C.JsNull()
+		c_receiver = nil
 	} else {
 		c_receiver = receiver.object
 	}
-	var rval jsval
-	
-	C.JS_CallFunctionValue(self.js.context, receiver, self.function, len(params), 
+	var rval C.jsval
+	c_params := C.AllocateJsvalArray(C.int(len(params)))
+	for index, param := range(params) {
+		C.SetJsvalArray(c_params, C.int(index), self.js.goval2jsval(param))
+	}
+	C.JS_CallFunctionValue(self.js.context, 
+		c_receiver,
+		self.function, 
+		C.uintN(len(params)), 
+		c_params,
+		&rval)
+	return self.js.jsval2goval(rval)
 }
-*/
+
 type JS struct {
 	context *C.JSContext
 	global *C.JSObject
@@ -64,6 +73,10 @@ func NewJS() *JS {
 func (self *JS) Destroy() {
 	delete(scripts, self)
 	C.DestroyContext(self.context)
+}
+
+func (self *JS) goval2jsval(val interface{}) C.jsval {
+	return C.JsNull()
 }
 
 func (self *JS) jsval2goval(val C.jsval) interface{} {
