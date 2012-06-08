@@ -13,7 +13,7 @@ To install gomonkey you need a recent (>= 1.8.5) https://developer.mozilla.org/e
 
 The error at the end is expected, for some reason cgo is unable to link properly against recent SpiderMonkeys.
 
-To fix this, do
+To fix this I created a small C wrapper that you compile and link using your regular old C compiler.
 
     > cd $GOPATH/src/github.com/zond/gomonkey
     > make
