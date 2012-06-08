@@ -10,20 +10,21 @@ import "C"
 import (
 	"fmt"
 	"unsafe"
+	"runtime"
 )
 
-var runtime *C.JSRuntime
+var jsruntime *C.JSRuntime
 var scripts map[*JS]bool = make(map[*JS]bool)
 
 func init() {
-	runtime = C.JS_NewRuntime(1024 * 1024)
+	jsruntime = C.JS_NewRuntime(1024 * 1024)
 }
 
 func Shutdown() {
 	for script,_ := range(scripts) {
 		script.Destroy()
 	}
-	C.JS_DestroyRuntime(runtime)
+	C.JS_DestroyRuntime(jsruntime)
 	C.JS_ShutDown()
 }
 
@@ -72,7 +73,7 @@ type JS struct {
 }
 
 func NewJS() *JS {
-	context := C.NewContext(runtime)
+	context := C.NewContext(jsruntime)
 	if context == nil {
 		panic("Unable to create context!")
 	}
@@ -84,12 +85,19 @@ func NewJS() *JS {
 
 	script := &JS{context, global}
 	scripts[script] = true
+
+	runtime.SetFinalizer(script, func(script *JS) {
+		script.Destroy()
+	})
+
 	return script
 }
 
 func (self *JS) Destroy() {
-	delete(scripts, self)
-	C.DestroyContext(self.context)
+	if _,ok := scripts[self]; ok {
+		delete(scripts, self)
+		C.DestroyContext(self.context)
+	}
 }
 
 func (self *JS) goval2jsval(val interface{}) C.jsval {
