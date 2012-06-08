@@ -16,15 +16,21 @@ JsNull() {
 JSObject*
 Jsval2JSObject(JSContext *context, jsval val) {
   jsval out;
-  JS_ConvertValue(context, val, JSTYPE_OBJECT, &out);
-  return (JSObject*) out;
+  if (JS_ConvertValue(context, val, JSTYPE_OBJECT, &out)) {
+    return (JSObject*) out;
+  } else {
+    return NULL;
+  }
 }
 
 JSFunction*
 Jsval2JSFunction(JSContext *context, jsval val) {
   jsval out;
-  JS_ConvertValue(context, val, JSTYPE_FUNCTION, &out);
-  return (JSFunction*) out;
+  if (JS_ConvertValue(context, val, JSTYPE_FUNCTION, &out)) {
+    return (JSFunction*) out;
+  } else {
+    return NULL;
+  }
 }
 
 JSString*
@@ -35,15 +41,21 @@ Jsval2JSString(JSContext *context, jsval val) {
 jsdouble
 Jsval2jsdouble(JSContext *context, jsval val) {
   jsdouble out;
-  JS_ValueToNumber(context, val, &out);
-  return out;
+  if (JS_ValueToNumber(context, val, &out)) {
+    return out;
+  } else {
+    return 0.0;
+  }
 }
 
 JSBool
 Jsval2JSBool(JSContext *context, jsval val) {
   jsval out;
-  JS_ConvertValue(context, val, JSTYPE_BOOLEAN, &out);
-  return (JSBool) out;
+  if (JS_ConvertValue(context, val, JSTYPE_BOOLEAN, &out)) {
+    return (JSBool) out;
+  } else {
+    return JS_FALSE;
+  }
 }
 
 jsval*
