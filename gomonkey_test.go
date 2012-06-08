@@ -62,3 +62,19 @@ func TestFunctionReturn(t *testing.T) {
 		t.Error(x, "should return 1.0")
 	}
 }
+
+func TestFunctionArguments(t *testing.T) {
+	script := NewJS()
+	defer script.Destroy()
+	x := script.Eval("function x(y) { return y; }; x")
+	if x.(*JSFunction).Call(nil, 1.2) != 1.2 {
+		t.Error(x, "should return 1.2")
+	}
+	if x.(*JSFunction).Call(nil, "blep") != "blep" {
+		t.Error(x, "should return \"blep\"")
+	}
+	if !x.(*JSFunction).Call(nil, x).(*JSFunction).Equals(x.(*JSFunction)) {
+		t.Error(x, "should return", x)
+	}
+	
+}

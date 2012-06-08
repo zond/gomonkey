@@ -32,9 +32,17 @@ type JSObject struct {
 	object *C.JSObject
 }
 
+func (self *JSObject) Equals(other *JSObject) bool {
+	return self.js == other.js && self.object == other.object
+}
+
 type JSFunction struct {
 	js *JS
 	function C.jsval
+}
+
+func (self *JSFunction) Equals(other *JSFunction) bool {
+	return (self.js == other.js) && (self.function == other.function)
 }
 
 func (self *JSFunction) Call(receiver *JSObject, params... interface{}) interface{} {
