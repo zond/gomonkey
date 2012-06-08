@@ -10,4 +10,4 @@ Then you build the small helper class (necessary because for some reason cgo is 
 
 The `Makefile` is *really* trivial and probably won't work on your system. Patches are welcome.
 
-Then you just `go test`. Currently there isn't much more to do, even if you *could* look at `gomonkey_test.go` and figure out how to use this for other things than testing itself ;)
+Then you just `go test`. Currently there isn't much more to do, even if you *could* look at https://github.com/zond/gomonkey/blob/master/gomonkey_test.go and figure out how to use this for other things than testing itself ;)
