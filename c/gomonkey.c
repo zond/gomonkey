@@ -29,9 +29,7 @@ Jsval2JSFunction(JSContext *context, jsval val) {
 
 JSString*
 Jsval2JSString(JSContext *context, jsval val) {
-  jsval out;
-  JS_ConvertValue(context, val, JSTYPE_STRING, &out);
-  return (JSString*) out;
+  return JS_ValueToString(context, val);
 }
 
 jsdouble

@@ -33,6 +33,15 @@ func TestFalseReturn(t *testing.T) {
 	}
 }
 
+func TestStringReturn(t *testing.T) {
+	script := NewJS()
+	defer script.Destroy()
+	x := script.Eval("\"hej\" + \" kompis\"")
+	if x != "hej kompis" {
+		t.Error(x, "should be \"hej kompis\"")
+	}
+}
+
 func TestObjectReturn(t *testing.T) {
 	script := NewJS()
 	defer script.Destroy()
