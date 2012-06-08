@@ -71,3 +71,16 @@ func TestFunctionArguments(t *testing.T) {
 	}
 	
 }
+
+func TestUnicode(t *testing.T) {
+	script := NewJS()
+	x := script.Eval("\"åäöß\"")
+	if x != "åäöß" {
+		t.Error(x, "should be åäöß")
+	}
+	x2 := script.Eval("function() { return \"åslög\"; }")
+	if x2.(*JSFunction).Call(nil) != "åslög" {
+		t.Error(x, "should return \"åslög\"")
+	}
+}
+

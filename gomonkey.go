@@ -18,6 +18,7 @@ var scripts map[*JS]bool = make(map[*JS]bool)
 
 func init() {
 	jsruntime = C.JS_NewRuntime(1024 * 1024)
+	C.JS_SetCStringsAreUTF8()
 }
 
 func Shutdown() {
