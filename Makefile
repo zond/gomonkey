@@ -1,3 +1,10 @@
 
+CFLAGS=`js-config --cflags`
+LIBS=`js-config --libs`
+DYNLIB=libgomonkey.dylib
+
 all:	c/gomonkey.c c/gomonkey.h
-	gcc -fPIC -shared -o libgomonkey.dylib c/gomonkey.c -lmozjs185
+	${CC} -fPIC -shared -o ${DYNLIB} ${CFLAGS} ${LIBS} c/gomonkey.c
+
+clean:
+	rm ${DYNLIB}
