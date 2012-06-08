@@ -4,16 +4,16 @@ A Go wrapper around SpiderMonkey.
 
 ## Installing
 
-To install gomonkey you need a recent (>= 1.8.5) https://developer.mozilla.org/en/SpiderMonkey/ and have the `js-config` program in your `$PATH`.
+To install gomonkey you need a recent (>= 1.8.5) https://developer.mozilla.org/en/SpiderMonkey/ and have the `js-config` program in your `$PATH`, then just:
 
     > go get github.com/zond/gomonkey
     # github.com/zond/gomonkey
     ld: library not found for -lgomonkey
     collect2: ld returned 1 exit status
 
-The error at the end is expected, for some reason cgo is unable to link properly against recent SpiderMonkeys.
+The error at the end is expected, for some reason cgo is unable to link properly against recent SpiderMonkeys, and to fix this I created a small C wrapper that you compile and link using your regular old C compiler.
 
-To fix this I created a small C wrapper that you compile and link using your regular old C compiler.
+To build the wrapper and then install the library properly:
 
     > cd $GOPATH/src/github.com/zond/gomonkey
     > make
