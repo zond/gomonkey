@@ -4,7 +4,7 @@ A Go wrapper around SpiderMonkey
 
 ## Using
 
-To use gomonkey you must install a recent (>= 1.8.5) https://developer.mozilla.org/en/SpiderMonkey/ in a location found by gcc.
+To use gomonkey you must install a recent (>= 1.8.5) https://developer.mozilla.org/en/SpiderMonkey/ and have the `js-config` program in your `$PATH`.
 
 Then you build the small helper class (necessary because cgo for some reason is unable to link properly against SpiderMonkey) by `make`.
 
