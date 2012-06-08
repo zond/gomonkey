@@ -7,6 +7,10 @@ package gomonkey
 */
 import "C"
 
+import (
+	"unsafe"
+)
+
 var runtime *C.JSRuntime
 var scripts map[*JS]bool = make(map[*JS]bool)
 
@@ -29,9 +33,21 @@ type JSObject struct {
 
 type JSFunction struct {
 	js *JS
-	function *C.JSFunction
+	function C.jsval
 }
-
+/*
+func (self *JSFunction) Call(receiver *JSObject, params... interface{}) interface{} {
+	var c_receiver C.JSObject
+	if receiver == nil {
+		c_receiver = C.JsNull()
+	} else {
+		c_receiver = receiver.object
+	}
+	var rval jsval
+	
+	C.JS_CallFunctionValue(self.js.context, receiver, self.function, len(params), 
+}
+*/
 type JS struct {
 	context *C.JSContext
 	global *C.JSObject
@@ -57,9 +73,11 @@ func (self *JS) jsval2goval(val C.jsval) interface{} {
 	} else if t == C.JSTYPE_OBJECT {
 		return &JSObject{self, C.Jsval2JSObject(self.context, val)}
 	} else if t == C.JSTYPE_FUNCTION {
-		return &JSFunction{self, C.Jsval2JSFunction(self.context, val)}
+		return &JSFunction{self, val}
 	} else if t == C.JSTYPE_STRING {
-		return C.GoString(C.JS_EncodeString(self.context, C.Jsval2JSString(self.context, val)))
+		c_string := C.JS_EncodeString(self.context, C.Jsval2JSString(self.context, val))
+		defer C.free(unsafe.Pointer(c_string))
+		return C.GoString(c_string)
 	} else if t == C.JSTYPE_NUMBER {
 		return float64(C.Jsval2jsdouble(self.context, val))
 	} else if t == C.JSTYPE_BOOLEAN {
@@ -70,11 +88,15 @@ func (self *JS) jsval2goval(val C.jsval) interface{} {
 
 func (self *JS) Eval(script string) interface{} {
 	var rval C.jsval
+	c_script := C.CString(script)
+	defer C.free(unsafe.Pointer(c_script))
+	c_scriptname := C.CString("script")
+	defer C.free(unsafe.Pointer(c_scriptname))
 	C.JS_EvaluateScript(self.context, 
                 self.global,
-                C.CString(script), 
+                c_script, 
                 C.uintN(len(script)),
-                C.CString("script"),
+                c_scriptname,
                 1, 
                 &rval)
 	return self.jsval2goval(rval)

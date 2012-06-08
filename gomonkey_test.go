@@ -54,7 +54,7 @@ func TestObjectReturn(t *testing.T) {
 func TestFunctionReturn(t *testing.T) {
 	script := NewJS()
 	defer script.Destroy()
-	x := script.Eval("function() { return 1; }")
+	x := script.Eval("function x() { return 1; }; x")
 	if reflect.TypeOf(x) != reflect.TypeOf(&JSFunction{}) {
 		t.Error(x, "should be a JSFunction")
 	}
