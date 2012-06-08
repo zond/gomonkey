@@ -33,6 +33,15 @@ type JSObject struct {
 	object *C.JSObject
 }
 
+func NewJSObject(js *JS, object *C.JSObject) *JSObject {
+	rval := &JSObject{js, object}
+	C.JS_AddObjectRoot(rval.js.context, &(rval.object))
+	runtime.SetFinalizer(rval, func(o *JSObject) {
+		C.JS_RemoveObjectRoot(o.js.context, &(o.object))
+	})
+	return rval
+}
+
 func (self *JSObject) Equals(other *JSObject) bool {
 	return self.js == other.js && self.object == other.object
 }
