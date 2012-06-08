@@ -2,9 +2,8 @@
 package gomonkey
 
 /*
-#cgo CFLAGS: -I/opt/local/include/js -DXP_UNIX
-#cgo LDFLAGS: -L/opt/local/lib -ljs
-#include <jsapi.h>
+#cgo LDFLAGS: -L. -lgomonkey -lmozjs185
+#include "c/gomonkey.h"
 */
 import "C"
 
@@ -33,29 +32,39 @@ type JSFunction struct {
 	value *C.JSFunction
 }
 
-func (self *JSFunction) Call(args ...interface{}) {
-	
-}
-
 type JS struct {
 	context *C.JSContext
 	global *C.JSObject
 }
 
 func NewJS() *JS {
-	context := C.JS_NewContext(runtime, 8192)
-	global := C.JS_NewObject(context, nil, nil, nil)
+	context := C.NewContext(runtime)
+	global := C.NewGlobalObject(context)
 	script := &JS{context, global}
-	C.JS_InitStandardClasses(context, global)
 	scripts[script] = true
 	return script
 }
 
 func (self *JS) Destroy() {
 	delete(scripts, self)
-	C.JS_DestroyContext(self.context)
+	C.DestroyContext(self.context)
 }
-
+/*
+func (self *JS) goval2jsval(val interface{}) C.jsval {
+	if val == nil {
+		return C.JSVAL_NULL
+	} else {
+		switch t := val.(type) {
+		case *JSObject:
+			var rval C.jsval
+			C.JS_ValueToObject(self.context, rval, val.(*JSObject).value)
+			return rval
+		case *JSFunction:
+			return C.JS_ValueToFunction(self.contect, val.(*JSFunction).value)
+		}
+	}
+}
+*/
 func (self *JS) jsval2goval(val C.jsval) interface{} {
 	t := C.JS_TypeOfValue(self.context, val)
 	if t == C.JSTYPE_VOID {
@@ -68,7 +77,7 @@ func (self *JS) jsval2goval(val C.jsval) interface{} {
 	} else if t == C.JSTYPE_FUNCTION {
 		return &JSFunction{self, C.JS_ValueToFunction(self.context, val)}
 	} else if t == C.JSTYPE_STRING {
-		return C.GoString(C.JS_GetStringBytes(C.JS_ValueToString(self.context, val)))
+		return C.GoString(C.JS_EncodeString(self.context, C.JS_ValueToString(self.context, val)))
 	} else if t == C.JSTYPE_NUMBER {
  		var rval C.jsdouble
 		C.JS_ValueToNumber(self.context, val, &rval)
