@@ -33,3 +33,7 @@ AllocateJsvalArray(int);
 
 extern void
 SetJsvalArray(jsval*, int, jsval);
+
+extern jsval
+JSObject2Jsval(JSObject*);
+

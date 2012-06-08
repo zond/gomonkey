@@ -60,19 +60,27 @@ JSContext*
 NewContext(JSRuntime* runtime) {
   JSContext *context = JS_NewContext(runtime, 8192);
 
-  JS_SetOptions(context, JSOPTION_VAROBJFIX | JSOPTION_JIT | JSOPTION_METHODJIT);
-  JS_SetVersion(context, JSVERSION_LATEST);
-  JS_SetErrorReporter(context, reportError);
-
-  return context;
+  if (context == NULL) {
+    return NULL;
+  } else {
+    JS_SetOptions(context, JSOPTION_VAROBJFIX | JSOPTION_JIT | JSOPTION_METHODJIT);
+    JS_SetVersion(context, JSVERSION_LATEST);
+    JS_SetErrorReporter(context, reportError);
+    
+    return context;
+  }
 }
-
+  
 JSObject*
 NewGlobalObject(JSContext* context) {
   JSObject *global = JS_NewCompartmentAndGlobalObject(context, &global_class, NULL);
-  JS_InitStandardClasses(context, global);
-
-  return global;
+  if (global == NULL) {
+    return NULL;
+  } else {
+    JS_InitStandardClasses(context, global);
+    
+    return global;
+  }
 }
 
 void

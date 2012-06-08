@@ -8,6 +8,7 @@ package gomonkey
 import "C"
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -64,7 +65,15 @@ type JS struct {
 
 func NewJS() *JS {
 	context := C.NewContext(runtime)
+	if context == nil {
+		panic("Unable to create context!")
+	}
+
 	global := C.NewGlobalObject(context)
+	if global == nil {
+		panic("Unable to create global object!")
+	}
+
 	script := &JS{context, global}
 	scripts[script] = true
 	return script
@@ -76,6 +85,19 @@ func (self *JS) Destroy() {
 }
 
 func (self *JS) goval2jsval(val interface{}) C.jsval {
+	if val == nil {
+		return C.JsNull()
+	} else {
+		switch val.(type) {
+		case (*JSObject):
+		case (*JSFunction):
+		case string:
+		case float64:
+		case bool:
+		default:
+			panic(fmt.Sprint("Unable to convert", val, "to jsval!"))
+		}
+	}
 	return C.JsNull()
 }
 
