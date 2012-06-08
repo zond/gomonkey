@@ -1,6 +1,6 @@
 # gomonkey
 
-A Go wrapper around SpiderMonkey
+A Go wrapper around SpiderMonkey.
 
 ## Using
 
